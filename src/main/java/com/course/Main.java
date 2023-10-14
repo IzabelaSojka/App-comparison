@@ -41,6 +41,4 @@ public class Main {
     public void deleteCustomer(@PathVariable("customerId") Integer id){
         customerRepository.deleteById(id);
     }
-
-
 }

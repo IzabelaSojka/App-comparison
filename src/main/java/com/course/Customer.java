@@ -30,7 +30,6 @@ public class Customer {
     }
 
     public Customer() {
-
     }
 
     public Integer getId() {
