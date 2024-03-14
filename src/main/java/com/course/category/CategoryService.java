@@ -13,27 +13,27 @@ public class CategoryService {
     private JdbcTemplate jdbcTemplate;
 
     public void addCategory(Category category) {
-        String sql = "INSERT INTO Category (Name) VALUES (?)";
+        String sql = "INSERT INTO public.\"Category\" (Name) VALUES (?)";
         jdbcTemplate.update(sql, category.getName());
     }
 
     public List<Category> getAllCategories() {
-        String sql = "SELECT * FROM Category";
+        String sql = "SELECT * FROM public.\"Category\"";
         return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Category.class));
     }
 
     public Category getCategoryById(int categoryId) {
-        String sql = "SELECT * FROM Category WHERE Id_category = ?";
+        String sql = "SELECT * FROM public.\"Category\"y WHERE \"Id_category\" = ?";
         return jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(Category.class), categoryId);
     }
 
     public void updateCategory(Category category) {
-        String sql = "UPDATE Category SET Name = ? WHERE Id_category = ?";
+        String sql = "UPDATE public.\"Category\" SET Name = ? WHERE \"Id_category\" = ?";
         jdbcTemplate.update(sql, category.getName(), category.getId());
     }
 
     public void deleteCategory(int categoryId) {
-        String sql = "DELETE FROM Category WHERE Id_category = ?";
+        String sql = "DELETE FROM public.\"Category\" WHERE \"Id_category\" = ?";
         jdbcTemplate.update(sql, categoryId);
     }
 }

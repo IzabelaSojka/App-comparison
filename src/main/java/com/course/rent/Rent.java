@@ -19,7 +19,6 @@ public class Rent {
         this.readerId = readerId;
     }
 
-    // Getters and setters
     public int getId() {
         return id;
     }
