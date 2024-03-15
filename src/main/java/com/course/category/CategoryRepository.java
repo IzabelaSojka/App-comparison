@@ -9,3 +9,4 @@ public interface CategoryRepository {
     void updateCategory(Category category);
     void deleteCategory(int id);
 }
+

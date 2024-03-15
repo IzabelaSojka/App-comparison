@@ -1,7 +1,6 @@
 package com.course.Book;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,18 +11,23 @@ public class BookController {
     @Autowired
     private BookService bookService;
 
+    @PostMapping("/add")
+    public void addBook(@RequestBody BookRequest bookRequest) {
+        bookService.addBook(bookRequest.getTitle(), bookRequest.getAuthor(), bookRequest.getCategoryName());
+    }
+
     @GetMapping
-    public List<Book> getAllBooks() {
+    public List<BookDetails> getAllBooks() {
         return bookService.getAllBooks();
     }
 
     @GetMapping("/author/{author}")
-    public List<Book> getBooksByAuthor(@PathVariable String author) {
+    public List<BookDetails> getBooksByAuthor(@PathVariable String author) {
         return bookService.getBooksByAuthor(author);
     }
 
     @GetMapping("/Title/{Title}")
-    public Book getBooksByTitle(@PathVariable String Title) {
+    public BookDetails getBooksByTitle(@PathVariable String Title) {
         return bookService.getBooksByTitle(Title);
     }
     @GetMapping("/{id}")
@@ -32,7 +36,7 @@ public class BookController {
     }
 
     @GetMapping("/category/{categoryName}/books")
-    public List<Book> getBooksForCategory(@PathVariable String categoryName) {
+    public List<BookDetails> getBooksForCategory(@PathVariable String categoryName) {
         return bookService.getBooksForCategory(categoryName);
     }
 }

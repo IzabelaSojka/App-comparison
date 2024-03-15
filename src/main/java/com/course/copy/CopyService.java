@@ -1,9 +1,11 @@
 package com.course.Copy;
 
+import com.course.Book.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -11,10 +13,16 @@ import java.util.List;
 public class CopyService {
     @Autowired
     private JdbcTemplate jdbcTemplate;
+    @Autowired
+    private BookService bookService;
 
-    public void addCopy(Copy copy) {
-        String sql = "INSERT INTO public.\"Copy\" (Id_book, Status) VALUES (?, ?)";
-        jdbcTemplate.update(sql, copy.getBookId(), copy.getStatus());
+    @Transactional
+    public void addCopy(String bookTitle) {
+        int bookId = bookService.getBookIdByTitle(bookTitle);
+
+        // Dodaj nowy egzemplarz do tabeli Copy
+        String addCopyQuery = "INSERT INTO public.\"Copy\" (\"Id_book\", \"Status\") VALUES (?, 'dostępny')";
+        jdbcTemplate.update(addCopyQuery, bookId);
     }
 
     public List<Copy> getAllCopies() {
@@ -33,7 +41,7 @@ public class CopyService {
     }
 
     public void deleteCopy(int copyId) {
-        String sql = "DELETE FROM public.\"Copy\" WHERE \"Id_copy\"  = ?";
+        String sql = "DELETE FROM public.\"Copy\" WHERE \"Id_copy\" = ?";
         jdbcTemplate.update(sql, copyId);
     }
 

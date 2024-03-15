@@ -5,7 +5,10 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -13,9 +16,25 @@ public class RentService {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public void addRent(Rent rent) {
-        String sql = "INSERT INTO public.\"Rent\" (Date_rent, Date_return, Id_copy, Id_reader) VALUES (?, ?, ?, ?)";
-        jdbcTemplate.update(sql, rent.getDateRent(), rent.getDateReturn(), rent.getCopyId(), rent.getReaderId());
+    @Transactional
+    public void addRent(int readerId, int copyId) throws Exception {
+        // Sprawdzenie, czy egzemplarz jest dostępny
+        String checkCopyAvailabilitySql = "SELECT \"Status\" FROM public.\"Copy\" WHERE \"Id_copy\" = ?";
+        String status = jdbcTemplate.queryForObject(checkCopyAvailabilitySql, new Object[]{copyId}, String.class);
+        if (!"dostępny".equals(status)) {
+            throw new Exception("Egzemplarz nie jest dostępny do wypożyczenia.");
+        }
+
+        // Aktualizacja statusu egzemplarza na "wypożyczony"
+        String updateCopyStatusSql = "UPDATE public.\"Copy\" SET \"Status\" = 'wypożyczony' WHERE \"Id_copy\" = ?";
+        jdbcTemplate.update(updateCopyStatusSql, copyId);
+
+        // Ustalenie bieżącej daty
+        Date currentDate = Date.valueOf(LocalDate.now());
+
+        // Dodanie wypożyczenia
+        String addRentSql = "INSERT INTO public.\"Rent\" (\"Date_rent\", \"Id_copy\", \"Id_reader\") VALUES (?, ?, ?)";
+        jdbcTemplate.update(addRentSql, currentDate, copyId, readerId);
     }
 
     public List<Rent> getAllRents() {
@@ -28,9 +47,23 @@ public class RentService {
         return jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(Rent.class), rentId);
     }
 
-    public void updateRent(Rent rent) {
-        String sql = "UPDATE public.\"Rent\" SET Date_rent = ?, Date_return = ?, Id_copy = ?, Id_reader = ? WHERE Id_rent = ?";
-        jdbcTemplate.update(sql, rent.getDateRent(), rent.getDateReturn(), rent.getCopyId(), rent.getReaderId(), rent.getId());
+    @Transactional
+    public void updateRent(int copyId) throws Exception {
+        // Sprawdzenie, czy egzemplarz jest aktualnie wypożyczony
+        String checkRentSql = "SELECT \"Id_rent\" FROM public.\"Rent\" WHERE \"Id_copy\" = ? AND \"Date_return\" IS NULL";
+        Integer rentId = jdbcTemplate.queryForObject(checkRentSql, new Object[]{copyId}, Integer.class);
+        if (rentId == null) {
+            throw new Exception("Egzemplarz nie jest aktualnie wypożyczony.");
+        }
+
+        // Aktualizacja daty zwrotu na dzisiejszą datę
+        Date currentDate = Date.valueOf(LocalDate.now());
+        String updateRentSql = "UPDATE public.\"Rent\" SET \"Date_return\" = ? WHERE \"Id_rent\" = ?";
+        jdbcTemplate.update(updateRentSql, currentDate, rentId);
+
+        // Aktualizacja statusu egzemplarza na "dostępny"
+        String updateCopyStatusSql = "UPDATE public.\"Copy\" SET \"Status\" = 'dostępny' WHERE \"Id_copy\" = ?";
+        jdbcTemplate.update(updateCopyStatusSql, copyId);
     }
 
     public void deleteRent(int rentId) {

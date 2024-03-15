@@ -13,7 +13,7 @@ public class ReaderController {
     private ReaderService readerService;
 
     @GetMapping("")
-    public List<Reader> getAllReaders() {
+    public List<ReaderRents> getAllReaders() {
         return readerService.getAllReaders();
     }
 
@@ -22,9 +22,9 @@ public class ReaderController {
         return readerService.getReaderById(readerId);
     }
 
-    @PostMapping("")
-    public void addReader(@RequestBody Reader reader) {
-        readerService.addReader(reader);
+    @PostMapping("/add")
+    public void addReader(@RequestParam String name, @RequestParam String surname) {
+        readerService.addReader(name, surname);
     }
 
     @DeleteMapping("/{readerId}")
@@ -33,7 +33,8 @@ public class ReaderController {
     }
 
     @GetMapping("/surname/{surname}")
-    public List<Reader> getReadersBySurname(@PathVariable String surname) {
+    public List<ReaderRents> getReadersBySurname(@PathVariable String surname) {
         return readerService.getReadersBySurname(surname);
     }
 }
+

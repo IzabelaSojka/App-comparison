@@ -21,13 +21,13 @@ public class CopyController {
         return copyService.getCopyById(copyId);
     }
 
-    @PostMapping("")
-    public void addCopy(@RequestBody Copy copy) {
-        copyService.addCopy(copy);
+    @PostMapping("/add")
+    public void addCopy(@RequestParam String bookTitle) {
+        copyService.addCopy(bookTitle);
     }
 
     @DeleteMapping("/{copyId}")
-    public void deleteCopy(@PathVariable("copyId") int copyId) {
+    public void deleteCopy(@PathVariable int copyId) {
         copyService.deleteCopy(copyId);
     }
 

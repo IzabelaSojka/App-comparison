@@ -23,7 +23,7 @@ public class CategoryService {
     }
 
     public Category getCategoryById(int categoryId) {
-        String sql = "SELECT * FROM public.\"Category\"y WHERE \"Id_category\" = ?";
+        String sql = "SELECT * FROM public.\"Category\" WHERE \"Id_category\" = ?";
         return jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(Category.class), categoryId);
     }
 
