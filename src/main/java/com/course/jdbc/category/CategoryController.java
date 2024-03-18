@@ -1,4 +1,4 @@
-package com.course.Category;
+package com.course.jdbc.category;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
