@@ -27,6 +27,10 @@ public class HReader {
     @OneToMany(mappedBy = "reader", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<HRent> rents;
+
+    @OneToOne(mappedBy = "reader", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private HContact contact;
     public HReader() {}
 
     public HReader(String name, String surname) {

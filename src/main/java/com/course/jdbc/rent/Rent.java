@@ -22,6 +22,4 @@ public class Rent {
         this.copyId = copyId;
         this.readerId = readerId;
     }
-
-
 }

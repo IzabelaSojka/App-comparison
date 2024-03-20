@@ -27,7 +27,15 @@ public class HReaderService {
     }
 
     public HReader getReaderById(int readerId) {
-        return readerRepository.findById(readerId).orElse(null);
+        return readerRepository.findById(readerId)
+                .map(reader -> {
+                    // Pobranie informacji o kontakcie czytelnika
+                    HContact contact = reader.getContact();
+                    // Ustawienie kontaktu w obiekcie czytelnika
+                    reader.setContact(contact);
+                    return reader;
+                })
+                .orElse(null);
     }
 
     @Transactional
@@ -46,6 +54,7 @@ public class HReaderService {
         readerRents.setId(reader.getId());
         readerRents.setName(reader.getName());
         readerRents.setSurname(reader.getSurname());
+        readerRents.setPhone(reader.getContact().getPhone());
         readerRents.setTotalBooks(reader.getRents().size());
         readerRents.setNotReturnedBooks(reader.getRents().stream().filter(rent -> rent.getDateReturn() == null).count());
         return readerRents;

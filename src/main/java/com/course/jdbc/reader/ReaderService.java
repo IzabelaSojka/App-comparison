@@ -47,13 +47,14 @@ public class ReaderService {
     }
 
     public List<ReaderRents> getReadersBySurname(String surname) {
-        String sql = "SELECT r.*, " +
+        String sql = "SELECT r.*, c.\"phone\" AS phone_number, " +
                 "COALESCE(COUNT(rt.\"id_reader\"), 0) AS total_books, " +
                 "COALESCE(SUM(CASE WHEN rt.\"date_return\" IS NULL THEN 1 ELSE 0 END), 0) AS not_returned_books " +
                 "FROM public.\"reader\" r " +
                 "LEFT JOIN public.\"rent\" rt ON r.\"id_reader\" = rt.\"id_reader\" " +
+                "LEFT JOIN public.\"contact\" c ON r.\"id_reader\" = c.\"Id_reader\" " +
                 "WHERE r.\"surname\" = ? " +
-                "GROUP BY r.\"id_reader\"";
+                "GROUP BY r.\"id_reader\", c.\"phone\"";
         List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql, surname);
         return mapReaders(rows);
     }
@@ -65,6 +66,7 @@ public class ReaderService {
             reader.setId((Integer) row.get("Id_reader"));
             reader.setName((String) row.get("Name"));
             reader.setSurname((String) row.get("Surname"));
+            reader.setPhone((String) row.get("phone_number"));
             reader.setTotalBooks((Long) row.get("total_books"));
             reader.setNotReturnedBooks((Long) row.get("not_returned_books"));
             readers.add(reader);

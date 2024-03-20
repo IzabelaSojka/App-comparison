@@ -11,6 +11,5 @@ public class HReaderRents {
     private String surname;
     private long totalBooks;
     private long notReturnedBooks;
-
-
+    private String phone;
 }

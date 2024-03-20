@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class CopyService {
@@ -43,9 +44,13 @@ public class CopyService {
         });
     }
 
-    public Copy getCopyById(int copyId) {
-        String sql = "SELECT * FROM public.\"copy\" WHERE \"id_copy\" = ?";
-        return jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(Copy.class), copyId);
+    public Map<String, Object> getCopyById(int copyId) {
+        String sql = "SELECT c.id_copy AS id, c.status, b.id_category AS idcategory, " +
+                "b.title, b.author, b.id_book " +
+                "FROM public.copy c " +
+                "JOIN public.book b ON c.id_book = b.id_book " +
+                "WHERE c.id_copy = ?";
+        return jdbcTemplate.queryForMap(sql, copyId);
     }
 
     public void deleteCopy(int copyId) {

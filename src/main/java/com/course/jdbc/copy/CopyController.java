@@ -4,6 +4,7 @@ package com.course.jdbc.copy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/copies")
@@ -17,7 +18,7 @@ public class CopyController {
     }
 
     @GetMapping("/{copyId}")
-    public Copy getCopyById(@PathVariable("copyId") int copyId) {
+    public Map<String, Object> getCopyById(@PathVariable("copyId") int copyId) {
         return copyService.getCopyById(copyId);
     }
 
