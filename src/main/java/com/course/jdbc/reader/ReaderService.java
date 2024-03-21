@@ -37,11 +37,9 @@ public class ReaderService {
     }
     @Transactional
     public void deleteReader(int readerId) {
-        // Usunięcie wszystkich wypożyczeń czytelnika
         String deleteRentsSql = "DELETE FROM public.\"rent\" WHERE \"id_reader\" = ?";
         jdbcTemplate.update(deleteRentsSql, readerId);
 
-        // Usunięcie czytelnika
         String deleteReaderSql = "DELETE FROM public.\"reader\" WHERE \"id_reader\" = ?";
         jdbcTemplate.update(deleteReaderSql, readerId);
     }
