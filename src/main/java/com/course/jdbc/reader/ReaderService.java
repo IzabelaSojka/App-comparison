@@ -15,9 +15,14 @@ public class ReaderService {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public void addReader(String name, String surname) {
-        String sql = "INSERT INTO public.\"reader\" (\"name\", \"surname\") VALUES (?, ?)";
-        jdbcTemplate.update(sql, name, surname);
+    public void addReader(String name, String surname, String phone) {
+        String insertReaderSql = "INSERT INTO public.\"reader\" (\"name\", \"surname\") VALUES (?, ?)";
+        jdbcTemplate.update(insertReaderSql, name, surname);
+
+        int id_reader = jdbcTemplate.queryForObject("SELECT lastval()", Integer.class);
+
+        String insertContactSql = "INSERT INTO public.\"contact\" (\"id_reader\", \"phone\") VALUES (?, ?)";
+        jdbcTemplate.update(insertContactSql,id_reader, phone);
     }
 
     public List<ReaderRents> getAllReaders() {
@@ -40,6 +45,9 @@ public class ReaderService {
         String deleteRentsSql = "DELETE FROM public.\"rent\" WHERE \"id_reader\" = ?";
         jdbcTemplate.update(deleteRentsSql, readerId);
 
+        String deleteContactSql = "DELETE FROM public.\"contact\" WHERE \"id_reader\" = ?";
+        jdbcTemplate.update(deleteContactSql, readerId);
+
         String deleteReaderSql = "DELETE FROM public.\"reader\" WHERE \"id_reader\" = ?";
         jdbcTemplate.update(deleteReaderSql, readerId);
     }
@@ -50,7 +58,7 @@ public class ReaderService {
                 "COALESCE(SUM(CASE WHEN rt.\"date_return\" IS NULL THEN 1 ELSE 0 END), 0) AS not_returned_books " +
                 "FROM public.\"reader\" r " +
                 "LEFT JOIN public.\"rent\" rt ON r.\"id_reader\" = rt.\"id_reader\" " +
-                "LEFT JOIN public.\"contact\" c ON r.\"id_reader\" = c.\"Id_reader\" " +
+                "LEFT JOIN public.\"contact\" c ON r.\"id_reader\" = c.\"id_reader\" " +
                 "WHERE r.\"surname\" = ? " +
                 "GROUP BY r.\"id_reader\", c.\"phone\"";
         List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql, surname);

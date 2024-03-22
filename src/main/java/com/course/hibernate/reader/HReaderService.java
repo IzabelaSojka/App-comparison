@@ -14,10 +14,18 @@ public class HReaderService {
     @Autowired
     private HReaderRepository readerRepository;
 
+    @Autowired
+    private HContactRepository contactRepository;
+
     @Transactional
-    public void addReader(String name, String surname) {
+    public void addReader(String name, String surname, String phone) {
         HReader reader = new HReader(name, surname);
         readerRepository.save(reader);
+
+        HContact contact = new HContact();
+        contact.setReader(reader);
+        contact.setPhone(phone);
+        contactRepository.save(contact);
     }
 
     public List<HReaderRents> getAllReaders() {

@@ -23,8 +23,8 @@ public class ReaderController {
     }
 
     @PostMapping("/add")
-    public void addReader(@RequestParam String name, @RequestParam String surname) {
-        readerService.addReader(name, surname);
+    public void addReader(@RequestParam String name, @RequestParam String surname, @RequestParam String phone) {
+        readerService.addReader(name, surname, phone);
     }
 
     @DeleteMapping("/{readerId}")

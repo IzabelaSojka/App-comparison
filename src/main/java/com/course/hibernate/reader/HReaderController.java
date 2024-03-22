@@ -12,8 +12,8 @@ public class HReaderController {
     private HReaderService hReaderService;
 
     @PostMapping("/add")
-    public void addReader(@RequestParam String name, @RequestParam String surname) {
-        hReaderService.addReader(name, surname);
+    public void addReader(@RequestParam String name, @RequestParam String surname, @RequestParam String phone) {
+        hReaderService.addReader(name, surname, phone);
     }
 
     @GetMapping("")
