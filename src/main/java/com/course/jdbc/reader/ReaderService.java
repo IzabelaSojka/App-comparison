@@ -41,28 +41,24 @@ public class ReaderService {
         return jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(Reader.class), readerId);
     }
     @Transactional
-    public void deleteReader(int readerId) {
-        String deleteRentsSql = "DELETE FROM public.\"rent\" WHERE \"id_reader\" = ?";
-        jdbcTemplate.update(deleteRentsSql, readerId);
+    public void deleteReader(String surname) {
+        String deleteRentsSql = "DELETE FROM public.\"rent\" WHERE \"id_reader\" IN (SELECT \"id_reader\" FROM public.\"reader\" WHERE \"surname\" = ?)";
+        jdbcTemplate.update(deleteRentsSql, surname);
 
-        String deleteContactSql = "DELETE FROM public.\"contact\" WHERE \"id_reader\" = ?";
-        jdbcTemplate.update(deleteContactSql, readerId);
+        String deleteContactSql = "DELETE FROM public.\"contact\" WHERE \"id_reader\" IN (SELECT \"id_reader\" FROM public.\"reader\" WHERE \"surname\" = ?)";
+        jdbcTemplate.update(deleteContactSql, surname);
 
-        String deleteReaderSql = "DELETE FROM public.\"reader\" WHERE \"id_reader\" = ?";
-        jdbcTemplate.update(deleteReaderSql, readerId);
+        String deleteReaderSql = "DELETE FROM public.\"reader\" WHERE \"surname\" = ?";
+        jdbcTemplate.update(deleteReaderSql, surname);
     }
 
-    public List<ReaderRents> getReadersBySurname(String surname) {
-        String sql = "SELECT r.*, c.\"phone\" AS phone_number, " +
-                "COALESCE(COUNT(rt.\"id_reader\"), 0) AS total_books, " +
-                "COALESCE(SUM(CASE WHEN rt.\"date_return\" IS NULL THEN 1 ELSE 0 END), 0) AS not_returned_books " +
+    public List<ReaderInfo> getReadersBySurname(String surname) {
+        String sql = "SELECT r.*, c.\"phone\" AS phone_number " +
                 "FROM public.\"reader\" r " +
-                "LEFT JOIN public.\"rent\" rt ON r.\"id_reader\" = rt.\"id_reader\" " +
                 "LEFT JOIN public.\"contact\" c ON r.\"id_reader\" = c.\"id_reader\" " +
-                "WHERE r.\"surname\" = ? " +
-                "GROUP BY r.\"id_reader\", c.\"phone\"";
+                "WHERE r.\"surname\" = ? ";
         List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql, surname);
-        return mapReaders(rows);
+        return mapReadersInfo(rows);
     }
 
     private List<ReaderRents> mapReaders(List<Map<String, Object>> rows) {
@@ -72,9 +68,21 @@ public class ReaderService {
             reader.setId((Integer) row.get("Id_reader"));
             reader.setName((String) row.get("Name"));
             reader.setSurname((String) row.get("Surname"));
-            reader.setPhone((String) row.get("phone_number"));
             reader.setTotalBooks((Long) row.get("total_books"));
             reader.setNotReturnedBooks((Long) row.get("not_returned_books"));
+            readers.add(reader);
+        }
+        return readers;
+    }
+
+    private List<ReaderInfo> mapReadersInfo(List<Map<String, Object>> rows) {
+        List<ReaderInfo> readers = new ArrayList<>();
+        for (Map<String, Object> row : rows) {
+            ReaderInfo reader = new ReaderInfo();
+            reader.setId((Integer) row.get("Id_reader"));
+            reader.setName((String) row.get("Name"));
+            reader.setSurname((String) row.get("Surname"));
+            reader.setPhone((String) row.get("phone_number"));
             readers.add(reader);
         }
         return readers;

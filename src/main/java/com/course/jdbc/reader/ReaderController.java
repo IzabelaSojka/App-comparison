@@ -27,13 +27,13 @@ public class ReaderController {
         readerService.addReader(name, surname, phone);
     }
 
-    @DeleteMapping("/{readerId}")
-    public void deleteReader(@PathVariable("readerId") int readerId) {
-        readerService.deleteReader(readerId);
+    @DeleteMapping("/{surname}")
+    public void deleteReader(@PathVariable("surname") String surname) {
+        readerService.deleteReader(surname);
     }
 
     @GetMapping("/surname/{surname}")
-    public List<ReaderRents> getReadersBySurname(@PathVariable String surname) {
+    public List<ReaderInfo> getReadersBySurname(@PathVariable String surname) {
         return readerService.getReadersBySurname(surname);
     }
 }

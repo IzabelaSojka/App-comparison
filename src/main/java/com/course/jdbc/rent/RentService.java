@@ -18,21 +18,17 @@ public class RentService {
 
     @Transactional
     public void addRent(int readerId, int copyId) throws Exception {
-        // Sprawdzenie, czy egzemplarz jest dostępny
         String checkCopyAvailabilitySql = "SELECT \"status\" FROM public.\"copy\" WHERE \"id_copy\" = ?";
         String status = jdbcTemplate.queryForObject(checkCopyAvailabilitySql, new Object[]{copyId}, String.class);
         if (!"dostępny".equals(status)) {
             throw new Exception("Egzemplarz nie jest dostępny do wypożyczenia.");
         }
 
-        // Aktualizacja statusu egzemplarza na "wypożyczony"
         String updateCopyStatusSql = "UPDATE public.\"copy\" SET \"status\" = 'wypożyczony' WHERE \"id_copy\" = ?";
         jdbcTemplate.update(updateCopyStatusSql, copyId);
 
-        // Ustalenie bieżącej daty
         Date currentDate = Date.valueOf(LocalDate.now());
 
-        // Dodanie wypożyczenia
         String addRentSql = "INSERT INTO public.\"rent\" (\"date_rent\", \"id_copy\", \"id_reader\") VALUES (?, ?, ?)";
         jdbcTemplate.update(addRentSql, currentDate, copyId, readerId);
     }
@@ -56,7 +52,6 @@ public class RentService {
 
     @Transactional
     public void updateRent(int copyId) throws Exception {
-        // Sprawdzenie, czy egzemplarz jest aktualnie wypożyczony
         String checkRentSql = "SELECT \"id_rent\" FROM public.\"rent\" WHERE \"id_copy\" = ? AND \"date_return\" IS NULL";
         Integer rentId = jdbcTemplate.queryForObject(checkRentSql, new Object[]{copyId}, Integer.class);
         if (rentId == null) {

@@ -11,16 +11,13 @@ public class ReaderRents {
     private String surname;
     private long totalBooks;
     private long notReturnedBooks;
-    private String phone;
-
     public ReaderRents() {}
 
-    public ReaderRents(int id, String name, String surname, long totalBooks, long notReturnedBooks, String phone) {
+    public ReaderRents(int id, String name, String surname, long totalBooks, long notReturnedBooks) {
         this.id = id;
         this.name = name;
         this.surname = surname;
         this.totalBooks = totalBooks;
         this.notReturnedBooks = notReturnedBooks;
-        this.phone = phone;
     }
 }

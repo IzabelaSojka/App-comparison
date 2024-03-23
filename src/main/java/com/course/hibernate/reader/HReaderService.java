@@ -62,7 +62,6 @@ public class HReaderService {
         readerRents.setId(reader.getId());
         readerRents.setName(reader.getName());
         readerRents.setSurname(reader.getSurname());
-        readerRents.setPhone(reader.getContact().getPhone());
         readerRents.setTotalBooks(reader.getRents().size());
         readerRents.setNotReturnedBooks(reader.getRents().stream().filter(rent -> rent.getDateReturn() == null).count());
         return readerRents;

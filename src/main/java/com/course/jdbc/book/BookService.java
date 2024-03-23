@@ -43,7 +43,7 @@ public class BookService {
     public List<BookDetails> getBooksByAuthor(String author) {
         String sql = "SELECT b.\"title\", b.\"author\", c.\"name\" AS category, " +
                 "COUNT(*) AS total_copies, " +
-                "SUM(CASE WHEN co.\"sStatus\" = 'dostępny' THEN 1 ELSE 0 END) AS available_copies " +
+                "SUM(CASE WHEN co.\"status\" = 'dostępny' THEN 1 ELSE 0 END) AS available_copies " +
                 "FROM public.\"book\" b " +
                 "JOIN public.\"category\" c ON b.\"id_category\" = c.\"id_category\" " +
                 "LEFT JOIN public.\"copy\" co ON b.\"id_book\" = co.\"id_book\" " +
